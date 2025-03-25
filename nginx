@@ -68,3 +68,29 @@ server {
     ErrorLog ${APACHE_LOG_DIR}/proxy-error.log
     CustomLog ${APACHE_LOG_DIR}/proxy-access.log combined
 </VirtualHost>
+
+
+############
+
+<VirtualHost *:120>
+
+ServerName roszczenia.allianz.pl
+ProxyPreserveHost On
+ProxyRequests off
+Timeout 1200
+ProxyTimeout 1200
+LimitRequestBody 109715200
+Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains;"
+Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED
+
+<Proxy "balancer://lbserviceService">
+    BalancerMember "http://s-vmrh-tibco-bwapp1.allianz.com.pl:18083" route=1
+    BalancerMember "http://s-vmrh-tibco-bwapp2.allianz.com.pl:18083" route=2
+
+    ProxySet stickysession=ROUTEID
+</Proxy>
+
+ProxyPass / balancer://lbserviceService/
+ProxyPassReverse / balancer://lbserviceService/
+
+</VirtualHost>
