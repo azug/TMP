@@ -1,0 +1,24 @@
+server {
+    listen 18083;
+    server_name localhost;
+    proxy_read_timeout 3600;
+
+    location / {
+#        proxy_pass                  https://web-olc-app-prod-lf-claim.apps.tools.adp.allianz/;
+        proxy_pass                  https://web-olc-prod.azpl-aks-prd-gw.azpl-prod.fc1.azure.aztec.cloud.allianz/;
+        proxy_ssl_verify            off;
+        proxy_ssl_session_reuse     on;
+        proxy_temp_file_write_size 64k;
+        proxy_connect_timeout 10080s;
+        proxy_send_timeout 10080;
+        proxy_read_timeout 10080;
+        proxy_buffer_size 64k;
+        proxy_buffers 16 32k;
+        proxy_busy_buffers_size 64k;
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_http_version            1.1;
+        server_tokens off;
+        proxy_ssl_server_name on;
+    }
+}
