@@ -22,3 +22,49 @@ server {
         proxy_ssl_server_name on;
     }
 }
+
+
+
+
+<VirtualHost *:18083>
+    ServerName localhost
+
+    # Wyłączenie nagłówka "Server"
+    ServerSignature Off
+    Header always unset "X-Powered-By"
+
+    # Proxy do HTTPS backendu
+    SSLProxyEngine on
+    SSLProxyVerify none
+    SSLProxyCheckPeerCN off
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerExpire off
+
+    # Włączenie SNI
+    SSLProxyMachineCertificateFile "/etc/apache2/ssl/apache.pem"  # jeśli wymagane certyfikaty klienckie
+    UseCanonicalName Off
+
+    ProxyRequests Off
+    ProxyPreserveHost On
+    ProxyPass / https://web-olc-prod.azpl-aks-prd-gw.azpl-prod.fc1.azure.aztec.cloud.aaa/ retry=0 timeout=10080 keepalive=On
+    ProxyPassReverse / https://web-olc-prod.azpl-aks-prd-gw.azpl-prod.fc1.azure.aztec.cloud.aaa/
+
+    # Czas oczekiwania
+    Timeout 10080
+    ProxyTimeout 10080
+
+    # Buforowanie – wyłączenie
+    SetEnv proxy-nokeepalive 1
+    SetEnv force-proxy-request-1.1 1
+    SetEnv proxy-sendchunked 1
+
+    # Wyłączenie buforowania i request_buffering
+    RequestBodyBuffering Off
+
+    # Opcjonalnie: ograniczenie buforów (Apache nie ma 1:1 odpowiedników)
+    # Można ewentualnie regulować parametrami MPM i mod_proxy_http w kompilacji
+
+    LogLevel warn
+    ErrorLog ${APACHE_LOG_DIR}/proxy-error.log
+    CustomLog ${APACHE_LOG_DIR}/proxy-access.log combined
+</VirtualHost>
