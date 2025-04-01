@@ -1,1 +1,6 @@
 awk '/Flags \[S\]/ {t[$4] = $1 " " $2} /Flags \[S.\]/ {print $1, $2, $4, "RTT:", $1 - t[$4]}' /var/log/oracle_traffic.log
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+-keyout /etc/pki/tls/private/localhost.key \
+-out /etc/pki/tls/certs/localhost.crt \
+-subj "/C=PL/ST=Local/L=Local/O=LocalOrg/OU=IT/CN=localhost"
