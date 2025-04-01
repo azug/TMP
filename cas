@@ -1,0 +1,7 @@
+{
+    "cas_server_url_prefix": "https://sso.example.org/cas",
+    "service_validate_url": "https://sso.example.org/cas/serviceValidate",
+    "login_url": "https://sso.example.org/cas/login",
+    "validate_server": true,
+    "debug": true
+}
